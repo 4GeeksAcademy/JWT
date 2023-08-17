@@ -67,30 +67,6 @@ def register():
     return jsonify({"access_token":access_token, "user": user.serialize() })
 
 
-
-
-@api.route("/signup", methods=["POST"])
-def signup():
-    request_body = request.get_json(force=True)
-    email = request.json.get("email", None)
-
-    #creacion de un registro en la tabla de user
-    if "is_active" not in request_body:
-        request_body.update({"is_active":True})
-    if "email" not in request_body:
-        return jsonify({"msg": "You have to put an email"}), 404
-    email_query = User.query.filter_by(email=request_body["email"]).first()
-    if email_query != None:
-        return jsonify({"msg": "User already exists"}), 400
-    if "password" not in request_body:
-        return jsonify({"msg": "You have to put a password"}), 404
-    user = User(email=request_body["email"],password=request_body["password"],is_active=request_body["is_active"])
-    db.session.add(user)
-    db.session.commit()
-    
-    access_token = create_access_token(identity=email)
-    return jsonify({"access_token":access_token, "user": user.serialize() })
-
 # LOGIN USER
 
 # Create a route to authenticate your users and return JWTs. The
