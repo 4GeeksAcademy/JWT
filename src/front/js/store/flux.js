@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -13,10 +15,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			token:""
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
+
+			login: async (dataEmail, dataPassword) => {
+				
+				try {
+					let data = await axios.post('https://refactored-halibut-jxrrj6vxrqrfjj69-3001.app.github.dev/api/login', {
+						email:dataEmail,
+						password:dataPassword
+					})
+					console.log(data);
+					localStorage.setItem("token",data.data.access_token)
+					setStore({token:data.data.access_token})
+					return true;
+				} catch (error) {
+					console.log(error);
+					return false;
+				}
+			},
+
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
