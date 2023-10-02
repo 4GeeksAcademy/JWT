@@ -16,7 +16,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			token:""
+			token:"",
+			auth: false
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -30,7 +31,63 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 					console.log(data);
 					localStorage.setItem("token",data.data.access_token)
-					setStore({token:data.data.access_token})
+					setStore({auth:true})
+					return true;
+				} catch (error) {
+					console.log(error);
+					return false;
+				}
+			},
+
+			signup: async (dataEmail, dataPassword) => {
+				
+				try {
+					let data = await axios.post('https://refactored-halibut-jxrrj6vxrqrfjj69-3001.app.github.dev/api/signup', {
+						email:dataEmail,
+						password:dataPassword
+					})
+					console.log(data);
+					localStorage.setItem("token",data.data.access_token)
+					// setStore({token:data.data.access_token})
+					return true;
+				} catch (error) {
+					console.log(error);
+					return false;
+				}
+			},
+
+			getProfile: async () => {
+				// let token = localStorage.getItem("token")
+				
+				try {
+					let data = await axios.get('https://refactored-halibut-jxrrj6vxrqrfjj69-3001.app.github.dev/api/profile', {
+						Headers: {
+							"Authorization": `Bearer ${localStorage.getItem("token")}`,
+						}
+					})
+					console.log(data);
+					// localStorage.setItem("token",data.data.access_token)
+					setStore({auth:true})
+					return true;
+				} catch (error) {
+					console.log(error);
+					setStore({auth:false})
+					return false;
+				}
+			},
+
+			logout: () => {
+				localStorage.removeItem("token")
+				return false
+			},
+			validToken: async () => {
+				try {
+					let data = await axios.get('https://refactored-halibut-jxrrj6vxrqrfjj69-3001.app.github.dev/api/profile', {
+						Headers: {
+							"Authorization": `Bearer ${localStorage.getItem("token")}`,
+						}
+					})
+					console.log(data);
 					return true;
 				} catch (error) {
 					console.log(error);
